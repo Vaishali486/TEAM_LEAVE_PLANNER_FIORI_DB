@@ -1,0 +1,121 @@
+PROCEDURE "LEAVE_ACTIONS"(
+    IN IN_ACTION NVARCHAR(10),
+    IN IN_EVENT_NO INTEGER,
+    IN ST_LEAVE_REQUEST_INFO "ST_LEAVE_REQUEST_INFO",
+    IN ST_LEAVE_EVENT_LOG "ST_LEAVE_EVENT_LOG",
+    OUT OUT_SUCCESS NVARCHAR(200)
+)
+LANGUAGE SQLSCRIPT
+SQL SECURITY INVOKER
+AS BEGIN
+
+    DECLARE LV_CREATION_DATE DATE;
+    DECLARE LV_LEAVE_ID INTEGER;
+    DECLARE LV_INVOICE_NO NVARCHAR(10);
+    DECLARE LV_LEAVE_STATUS INTEGER;
+    DECLARE LV_EMPLOYEE_ID INTEGER;
+    DECLARE LV_EVENT_CODE NVARCHAR(10); 
+    DECLARE LV_REMARK NVARCHAR(100);
+
+    SELECT CURRENT_TIMESTAMP INTO LV_CREATION_DATE FROM DUMMY;
+
+
+    IF (:IN_ACTION = 'CREATE') THEN
+        LV_EVENT_CODE = 'CR';
+        LV_REMARK = 'Leave reqest created';
+        LV_LEAVE_STATUS = 1;
+    SELECT "LEAVE_ID".NEXTVAL INTO LV_LEAVE_ID FROM DUMMY;
+    SELECT "EMPLOYEE_ID"
+    INTO  LV_EMPLOYEE_ID 
+    FROM :ST_LEAVE_REQUEST_INFO;
+
+    INSERT INTO "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"(
+        "LEAVE_ID",
+        "EMPLOYEE_ID",
+        "LEAVE_TYPE",
+        "NO_OF_LEAVES",
+        "START_DATE",
+        "END_DATE",
+        "LEAVE_STATUS",
+        "LEAVE_NOTES",
+        "IS_DELETED" 
+    )SELECT
+        :LV_LEAVE_ID,
+        "EMPLOYEE_ID",
+        "LEAVE_TYPE",
+        "NO_OF_LEAVES",
+        "START_DATE",
+        "END_DATE",
+        :LV_LEAVE_STATUS,
+        "LEAVE_NOTES",
+        "IS_DELETED"
+        
+    FROM :ST_LEAVE_REQUEST_INFO;
+
+    
+    INSERT INTO "TEAM_LEAVE_PLANNER_LEAVE_EVENT_LOG"(
+        "LEAVE_ID",
+        "EVENT_NO",
+        "EVENT_CODE",
+        "USER_ID",
+        "USER_NAME",
+        "REMARK",
+        "COMMENT",
+        "CREATED_ON"
+    )SELECT
+        :LV_LEAVE_ID,
+        :IN_EVENT_NO,
+        :LV_EVENT_CODE,
+        "USER_ID",
+        "USER_NAME",
+        :LV_REMARK,
+        "COMMENT",
+        :LV_CREATION_DATE
+        
+    FROM :ST_LEAVE_EVENT_LOG;
+    COMMIT;    
+    OUT_SUCCESS := 'Leave request created for employee ID: ' ||  :LV_EMPLOYEE_ID || ' , with leave id : ' || :LV_LEAVE_ID;	
+
+    ELSEIF(:IN_ACTION = 'DELETE') THEN
+    LV_EVENT_CODE = 'DL';
+    LV_REMARK ='Leave request deleted';
+
+        SELECT "LEAVE_ID","EMPLOYEE_ID"
+        INTO LV_LEAVE_ID , LV_EMPLOYEE_ID 
+        FROM :ST_LEAVE_REQUEST_INFO;
+
+        UPDATE  "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"
+        SET IS_DELETED = 'X', LEAVE_STATUS = 5
+        WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" =:LV_EMPLOYEE_ID;
+
+        INSERT INTO "TEAM_LEAVE_PLANNER_LEAVE_EVENT_LOG"(
+        "LEAVE_ID",
+        "EVENT_NO",
+        "EVENT_CODE",
+        "USER_ID",
+        "USER_NAME",
+        "REMARK",
+        "COMMENT",
+        "CREATED_ON")
+        SELECT
+        :LV_LEAVE_ID,
+        :IN_EVENT_NO,
+        :LV_EVENT_CODE,
+        "USER_ID",
+        "USER_NAME",
+        :LV_REMARK,
+        "COMMENT",
+        :LV_CREATION_DATE
+        
+    FROM :ST_LEAVE_EVENT_LOG;
+    COMMIT;
+    OUT_SUCCESS := 'Leave request deleted successfully with  leave id: ' || :LV_LEAVE_ID;
+    END IF;
+
+    
+
+   
+   
+    
+
+END

@@ -1,0 +1,39 @@
+{
+  "name": "TEAM_LEAVE_PLANNER",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@cap-js/hana": "^1",
+    "@sap/cds": "^8",
+    "@sap/cds-hana": "^2",
+    "@sap/hdbext": "^7.7.6",
+    "@sap/xssec": "^3",
+    "express": "^4",
+    "nodemailer": "^6.9.7",
+    "passport": "^0.6.0",
+    "sap-hdbext-promisfied": "2.202307.1"
+  },
+  "devDependencies": {
+    "@cap-js/cds-types": "^0.8.0",
+    "@sap/cds-dk": "^8",
+    "@sap/hdi-deploy": "4.9.5"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "cds": {
+    "requires": {
+      "db": "hana",
+      "auth": "mocked"
+    },
+    "hana": {
+      "deploy-format": "hdbtable"
+    },
+    "sql": {
+      "native_hana_associations": false
+    }
+  }
+}
