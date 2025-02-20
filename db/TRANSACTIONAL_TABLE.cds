@@ -7,8 +7,8 @@ entity LEAVE_REQUEST {
     EMPLOYEE_ID: Integer;	
     LEAVE_TYPE: String(15);	
     NO_OF_LEAVES: Decimal;	
-    START_DATE:DateTime	;
-    END_DATE:DateTime	;
+    START_DATE: Timestamp	;
+    END_DATE: Timestamp	;
     LEAVE_STATUS: Integer;	
     LEAVE_NOTES: String(50);
     IS_DELETED	: String(2);
@@ -22,11 +22,11 @@ entity LEAVE_REQUEST {
 entity LEAVE_EVENT_LOG{
         key LEAVE_ID : Integer64;//hardcode
         key EVENT_NO   : Integer;//sequence
-            EVENT_CODE :  String(5);
-            USER_ID    :  Integer;
+            EVENT_CODE : String(5);
+            USER_ID    : String(50);
             USER_NAME  : String(100);
             REMARK     : String(100);//hardcode
             COMMENT    : String(50);
-            CREATED_ON : DateTime;
+            CREATED_ON : Timestamp;
    
 }
