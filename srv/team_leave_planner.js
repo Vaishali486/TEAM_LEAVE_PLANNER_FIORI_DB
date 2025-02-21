@@ -9,8 +9,8 @@ module.exports = cds.service.impl(function () {
         try {
         var client = await dbClass.createConnectionFromEnv();
         var dbconn = new dbClass(client);
-        let connection = await cds.connect.to('db');
-        var sResponse = null;
+        // let connection = await cds.connect.to('db');
+        // var sResponse = null;
         var Result = null;
             var { 
                 sAction,       
@@ -24,9 +24,6 @@ module.exports = cds.service.impl(function () {
             if(sAction === 'CREATE'){
                 eventNo = 1;
                 var existingData = await SELECT.from`TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE` .where`EMPLOYEE_ID=${aLeaveRequestInfo[0].EMPLOYEE_ID}`;
-
-
-            
                 var sp = await dbconn.loadProcedurePromisified(hdbext, null, 'LEAVE_ACTIONS');
                 var output = await dbconn.callProcedurePromisified(sp, [sAction,eventNo, aLeaveRequestInfo,aLeaveEventLog ]);
                 Result = output.outputScalar.OUT_SUCCESS;
@@ -128,6 +125,96 @@ module.exports = cds.service.impl(function () {
         }
 
 
-    })   
+    }) ;
+    this.on('getEmployeeLeaveData',async(req)=>{
+        var vEmployeeId = req.data.vEmployeeId;
+        var sRole = req.data.sRole;
+        var aApproverData,aApproverLeaveData, aEmployeeData, aEmployeeLeaveData, oData;
+        aApproverData = await SELECT .from`TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE` .where`EMPLOYEE_ID=${vEmployeeId}`;
+        aApproverLeaveData = await SELECT .from`TEAM_LEAVE_PLANNER_LEAVE_REQUEST` .where`EMPLOYEE_ID=${vEmployeeId}`;
+
+        if(sRole ==="Approver"){
+            aEmployeeData = await SELECT .from`TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE` .where`REPORTING_LEAD_ID=${vEmployeeId}`;
+        }
+        else if(sRole === "Admin"){
+            aEmployeeData = await SELECT .from`TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE` .where`REPORTING_MANAGER_ID=${vEmployeeId}`;
+        }
+        var aData = aEmployeeData.map(function(item){return item.EMPLOYEE_ID});
+        aEmployeeLeaveData = await SELECT .from`TEAM_LEAVE_PLANNER_LEAVE_REQUEST` .where`EMPLOYEE_ID IN ${aData}`;
+
+        oData = {
+            "startDate": "",
+            "CASUAL_LEAVE_BALANCE": aApproverData[0].CASUAL_LEAVE_BALANCE,
+            "DESIGNATION_CODE": aApproverData[0].DESIGNATION_CODE, //change DESIGNATION to DESIGNATION_CODE
+            "EMAIL_ID": aApproverData[0].EMAIL_ID,
+            "EMPLOYEE_ID": aApproverData[0].EMPLOYEE_ID,
+            "EMPLOYEE_NAME": aApproverData[0].EMPLOYEE_NAME,
+            "GENERAL_LEAVE_BALANCE": aApproverData[0].GENERAL_LEAVE_BALANCE,
+            "MOBILE_NO": aApproverData[0].MOBILE_NO,
+            "PROJECT_CODE": aApproverData[0].PROJECT_CODE, //change PROJECT to PROJECT_CODE
+            "REPORTING_LEAD_ID": aApproverData[0].REPORTING_LEAD_ID , // change REPORTING_LEAD to REPORTING_LEAD_ID
+            "REPORTING_MANAGER_ID": aApproverData[0].REPORTING_MANAGER_ID, //change REPORTING_MANAGER to REPORTING_MANAGER_ID
+            "LeaveRequests": {
+                "LeaveInfo" :[]
+            },
+            "Subordinates": {  
+                "EmployeeDetails":[]    
+            }
+        };
+        for(let i=0;i<aApproverLeaveData.length;i++){
+            var oApproverLeaveData = {
+                    "EMPLOYEE_ID": aApproverLeaveData[i].EMPLOYEE_ID,
+                    "END_DATE": aApproverLeaveData[i].END_DATE,
+                    "IS_DELETED": aApproverLeaveData[i].IS_DELETED,
+                    "LEAVE_ID": aApproverLeaveData[i].LEAVE_ID,
+                    "LEAVE_NOTES": aApproverLeaveData[i].LEAVE_NOTES,
+                    "LEAVE_STATUS": aApproverLeaveData[i].LEAVE_STATUS,
+                    "LEAVE_TYPE": aApproverLeaveData[i].LEAVE_TYPE,
+                    "NO_OF_LEAVES": aApproverLeaveData[i].NO_OF_LEAVES,
+                    "START_DATE": aApproverLeaveData[i].START_DATE
+            }
+            oData.LeaveRequests.LeaveInfo.push(oApproverLeaveData);   
+        }
+
+        for(var j=0;j<aEmployeeData.length;j++){
+            var oSubordinates ={
+                "CASUAL_LEAVE_BALANCE": aEmployeeData[j].CASUAL_LEAVE_BALANCE,
+                "DESIGNATION_CODE": aEmployeeData[j].DESIGNATION_CODE, //change DESIGNATION to DESIGNATION_CODE
+                "EMAIL_ID": aEmployeeData[j].EMAIL_ID,
+                "EMPLOYEE_ID": aEmployeeData[j].EMPLOYEE_ID,
+                "EMPLOYEE_NAME": aEmployeeData[j].EMPLOYEE_NAME,
+                "GENERAL_LEAVE_BALANCE": aEmployeeData[j].GENERAL_LEAVE_BALANCE,
+                "MOBILE_NO": aEmployeeData[j].MOBILE_NO,
+                "PROJECT_CODE": aEmployeeData[j].PROJECT_CODE, //change PROJECT to PROJECT_CODE
+                "REPORTING_LEAD_ID": aEmployeeData[j].REPORTING_LEAD_ID , // change REPORTING_LEAD to REPORTING_LEAD_ID
+                "REPORTING_MANAGER_ID": aEmployeeData[j].REPORTING_MANAGER_ID,
+                "appointments":{
+                    "LeaveInfo":[]
+                }
+                }
+                var a;
+            for(let k=0 ;k<aEmployeeLeaveData.length;k++){
+                if(aEmployeeData[j].EMPLOYEE_ID == aEmployeeLeaveData[k].EMPLOYEE_ID){
+                    var arrayEmployeeLeaveData = {
+                        "EMPLOYEE_ID": aEmployeeLeaveData[k].EMPLOYEE_ID,
+                        "END_DATE": aEmployeeLeaveData[k].END_DATE,
+                        "IS_DELETED": aEmployeeLeaveData[k].IS_DELETED,
+                        "LEAVE_ID": aEmployeeLeaveData[k].LEAVE_ID,
+                        "LEAVE_NOTES": aEmployeeLeaveData[k].LEAVE_NOTES,
+                        "LEAVE_STATUS": aEmployeeLeaveData[k].LEAVE_STATUS,
+                        "LEAVE_TYPE": aEmployeeLeaveData[k].LEAVE_TYPE,
+                        "NO_OF_LEAVES": aEmployeeLeaveData[k].NO_OF_LEAVES,
+                        "START_DATE": aEmployeeLeaveData[k].START_DATE
+                }
+                oSubordinates.appointments.LeaveInfo.push(arrayEmployeeLeaveData);
+                }
+               
+            }
+            oData.Subordinates.EmployeeDetails.push(oSubordinates);
+        }
+        return oData;
+    });
+
+
 
 })

@@ -16,6 +16,7 @@ service team_leave_planner {
    
     action TeamLeaveAction(sAction:String, aLeaveRequestInfo :many LeaveRequest, aLeaveEventLog : many LeaveEventLog ) returns String;
     // action TeamLeaveApproval(sAction:String, aLeaveRequestInfo :many Leave_Request, aLeaveEventLog : many Leave_Event_Log ) returns String;
-    action InsertMasterData(sAction:String, aEmployeeMaster: many MasterEmployee);
+    action InsertMasterData(sAction:String, aEmployeeMaster: many MasterEmployee)returns String;
+    function getEmployeeLeaveData(vEmployeeId:Integer,sRole:String ) returns many String;
 
 }
