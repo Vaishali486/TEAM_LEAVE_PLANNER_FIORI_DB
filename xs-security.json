@@ -1,0 +1,56 @@
+{
+ "xsappname": "leavePlanner-xsapp",
+ "tenant-mode": "dedicated",
+ "scopes": [
+  {
+   "name": "$XSAPPNAME.Admin",
+   "description": "Admin"
+  },
+  {
+   "name": "$XSAPPNAME.Requestor",
+   "description": "Requestor"
+  },
+  {
+   "name": "$XSAPPNAME.Approver",
+   "description": "Approver"
+  }
+ ],
+ "attributes": [],
+ "role-templates": [
+  {
+   "name": "Admin",
+   "description": "generated",
+   "scope-references": [
+    "$XSAPPNAME.Admin"
+   ],
+   "attribute-references": []
+  },
+  {
+   "name": "Requestor",
+   "description": "generated",
+   "scope-references": [
+    "$XSAPPNAME.Requestor"
+   ],
+   "attribute-references": []
+  },
+  {
+   "name": "Approver",
+   "description": "generated",
+   "scope-references": [
+    "$XSAPPNAME.Approver"
+   ],
+   "attribute-references": []
+  }
+ ],
+ "oauth2-configuration": {
+  "credential-types": [
+   "binding-secret",
+   "x509"
+  ],
+  "redirect-uris": [
+   "http://localhost:5000/",
+   "https://port5000-workspaces-ws-p2xg7.us10.trial.applicationstudio.cloud.sap/",
+   "https://f7f4a3f2trial-dev-team-leave-planner.cfapps.us10-001.hana.ondemand.com/"
+  ]
+ }
+}
