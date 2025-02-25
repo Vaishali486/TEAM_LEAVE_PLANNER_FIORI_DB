@@ -6,6 +6,7 @@ context TEAM_LEAVE_PLANNER {
      entity MASTER_PROJECT {
             key CODE :Integer;
                 DESCRIPTION : String(50);
+                IS_BILLABLE : Boolean;
     }
      entity MASTER_LEAVE_TYPE {
             key CODE :String(15);
@@ -20,16 +21,16 @@ context TEAM_LEAVE_PLANNER {
             key EMPLOYEE_ID :Integer;
                 EMPLOYEE_NAME : String(100);
                 DESIGNATION_CODE : Integer;
-                PROJECT_CODE : Integer;
+            // key PROJECT_CODE : Integer;
                 MOBILE_NO : String(20);
                 EMAIL_ID : String(50);
-                
                 REPORTING_MANAGER_ID:Integer;
                 REPORTING_LEAD_ID:Integer;
                 GENERAL_LEAVE_BALANCE:Decimal;
                 CASUAL_LEAVE_BALANCE:Decimal;
-                TO_PROJECT_CODE : Association to many MASTER_PROJECT on
-                                    TO_PROJECT_CODE.CODE = PROJECT_CODE;
+                // TO_PROJECT_CODE : Association to many MASTER_PROJECT on 
+                //                     TO_PROJECT_CODE.CODE = PROJECT_CODE;
+                
                 TO_DESIGNATION_CODE : Association to many MASTER_DESIGNATION on
                                     TO_DESIGNATION_CODE.DESIGNATION_CODE = DESIGNATION_CODE;
     }
@@ -39,4 +40,5 @@ context TEAM_LEAVE_PLANNER {
             key DESIGNATION_NAME: String(50) ;
             key ROLE: String(50);
     }
+    
 }
