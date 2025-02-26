@@ -1,3 +1,5 @@
+using { TEAM_LEAVE_PLANNER.LEAVE_REQUEST } from './TRANSACTIONAL_TABLE';
+
 context TEAM_LEAVE_PLANNER {
     entity MASTER_STATUS {
             key CODE :Integer;
@@ -28,9 +30,14 @@ context TEAM_LEAVE_PLANNER {
                 REPORTING_LEAD_ID:Integer;
                 GENERAL_LEAVE_BALANCE:Decimal;
                 CASUAL_LEAVE_BALANCE:Decimal;
-                // TO_PROJECT_CODE : Association to many MASTER_PROJECT on 
-                //                     TO_PROJECT_CODE.CODE = PROJECT_CODE;
-                
+                TO_MREPORTING_EMPLOYEE:Association to many MASTER_EMPLOYEE on
+                                       TO_MREPORTING_EMPLOYEE.REPORTING_MANAGER_ID = EMPLOYEE_ID; 
+                TO_LREPORTING_EMPLOYEE : Association to many MASTER_EMPLOYEE on
+                                       TO_LREPORTING_EMPLOYEE.REPORTING_LEAD_ID = EMPLOYEE_ID;
+                                        
+                TO_LEAVE : Association to many  TEAM_LEAVE_PLANNER.LEAVE_REQUEST on
+                                TO_LEAVE.EMPLOYEE_ID = EMPLOYEE_ID;
+
                 TO_DESIGNATION_CODE : Association to many MASTER_DESIGNATION on
                                     TO_DESIGNATION_CODE.DESIGNATION_CODE = DESIGNATION_CODE;
     }

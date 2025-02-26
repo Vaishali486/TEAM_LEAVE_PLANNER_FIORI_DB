@@ -12,6 +12,8 @@ entity LEAVE_REQUEST {
     LEAVE_STATUS: Integer;	
     LEAVE_NOTES: String(50);
     IS_DELETED	: String(2);
+    // TO_EMPLOYEE : Association to one TLP.MASTER_EMPLOYEE on 
+    //                 TO_EMPLOYEE.EMPLOYEE_ID = EMPLOYEE_ID;
     TO_LEAVE_TYPE : Association to one TLP.MASTER_LEAVE_TYPE on 
                     TO_LEAVE_TYPE.CODE = LEAVE_TYPE;
     TO_LEAVE_STATUS : Association to one TLP.MASTER_STATUS on
