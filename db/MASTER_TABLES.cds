@@ -28,8 +28,8 @@ context TEAM_LEAVE_PLANNER {
                 EMAIL_ID : String(50);
                 REPORTING_MANAGER_ID:Integer;
                 REPORTING_LEAD_ID:Integer;
-                GENERAL_LEAVE_BALANCE:Decimal;
-                CASUAL_LEAVE_BALANCE:Decimal;
+                GENERAL_LEAVE_BALANCE:Decimal(16,1);
+                CASUAL_LEAVE_BALANCE:Decimal(16,1);
                 TO_MREPORTING_EMPLOYEE:Association to many MASTER_EMPLOYEE on
                                        TO_MREPORTING_EMPLOYEE.REPORTING_MANAGER_ID = EMPLOYEE_ID; 
                 TO_LREPORTING_EMPLOYEE : Association to many MASTER_EMPLOYEE on

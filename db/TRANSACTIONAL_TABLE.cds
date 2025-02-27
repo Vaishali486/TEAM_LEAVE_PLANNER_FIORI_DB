@@ -6,7 +6,7 @@ entity LEAVE_REQUEST {
     key LEAVE_ID: Integer64; //sequence 1000001	
     EMPLOYEE_ID: Integer;	
     LEAVE_TYPE: String(15);	
-    NO_OF_LEAVES: Decimal;	
+    NO_OF_LEAVES: Decimal(16,1);	
     START_DATE: Timestamp	;
     END_DATE: Timestamp	;
     LEAVE_STATUS: Integer;	
@@ -42,3 +42,6 @@ entity LEAVE_EVENT_LOG{
             CREATED_ON : Timestamp;
    
 }
+
+
+
