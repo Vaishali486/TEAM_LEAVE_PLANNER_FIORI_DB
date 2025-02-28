@@ -148,7 +148,7 @@ module.exports = cds.service.impl(function () {
         if(sRole ==="Approver"){
             aEmployeeData = await SELECT .from`TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE` .where`REPORTING_LEAD_ID=${vEmployeeId}`;
         }
-        else if(sRole === "Admin"){
+        else if(sRole === "Manager"){
             aEmployeeData = await SELECT .from`TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE` .where`REPORTING_MANAGER_ID=${vEmployeeId}`;
         }
         // var aEmployeeProjectId = await SELECT;

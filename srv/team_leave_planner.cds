@@ -24,7 +24,8 @@ service team_leave_planner {
    entity MasterProject as projection on TEAM_LEAVE_PLANNER.MASTER_PROJECT; 
 //    @requires : 'Admin'
    entity MasterLeaveType as projection on TEAM_LEAVE_PLANNER.MASTER_LEAVE_TYPE; 
-   
+   // @requires : 'Admin'
+   entity MasterStatus as projection on TEAM_LEAVE_PLANNER.MASTER_STATUS; 
 //    @requires :['Admin','Approver','Requestor']
     action TeamLeaveAction(sAction:String, aLeaveRequestInfo :many LeaveRequest, aLeaveEventLog : many LeaveEventLog ) returns String;
     // @requires : 'Admin'
