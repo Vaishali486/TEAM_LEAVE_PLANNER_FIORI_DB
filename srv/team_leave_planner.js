@@ -162,6 +162,7 @@ module.exports = cds.service.impl(function () {
             "CASUAL_LEAVE_BALANCE": aApproverData[0].CASUAL_LEAVE_BALANCE,
             "DESIGNATION_CODE": aApproversDesignation[0].DESIGNATION_CODE, //change DESIGNATION to DESIGNATION_CODE
             "DESIGNATION": aApproversDesignation[0].DESIGNATION_NAME,
+            "ROLE": aApproversDesignation[0].ROLE,
             "EMAIL_ID": aApproverData[0].EMAIL_ID,
             "EMPLOYEE_ID": aApproverData[0].EMPLOYEE_ID,
             "EMPLOYEE_NAME": aApproverData[0].EMPLOYEE_NAME,
@@ -198,23 +199,19 @@ module.exports = cds.service.impl(function () {
         for(var j=0;j<aEmployeeData.length;j++){
             var aDesignationMaster = await SELECT .from`TEAM_LEAVE_PLANNER_MASTER_DESIGNATION` .where`DESIGNATION_CODE=${aEmployeeData[j].DESIGNATION_CODE}`;
 
-            // var aApproversProjectIds= await SELECT .from`TEAM_LEAVE_PLANNER_EMPLOYEE_PROJECT` .where`EMPLOYEE_ID=${vEmployeeId}`;
-            // var aProjectId = aApproversProjectIds.map(function(item){return item.PROJECT_CODE});
-    
-            // var aApproversProjectDiscription = await SELECT .from`TEAM_LEAVE_PLANNER_MASTER_PROJECT` .where`CODE IN ${aProjectId}`;
-
             var aEmployeesProjectIds =  await SELECT .from`TEAM_LEAVE_PLANNER_EMPLOYEE_PROJECT` .where`EMPLOYEE_ID=${aEmployeeData[j].EMPLOYEE_ID}`;
             if(aEmployeesProjectIds.length){
             var aProjectIds = aEmployeesProjectIds.map(function(item){return item.PROJECT_CODE});
             var aEmployeeProjectDiscription = await SELECT .from`TEAM_LEAVE_PLANNER_MASTER_PROJECT` .where`CODE IN ${aProjectIds}`;
             }
-            var a ;
+           
 
 
             var oSubordinates ={
                 "CASUAL_LEAVE_BALANCE": aEmployeeData[j].CASUAL_LEAVE_BALANCE,
                 "DESIGNATION_CODE": aDesignationMaster[0].DESIGNATION_CODE, //change DESIGNATION to DESIGNATION_CODE
                 "DESIGNATION": aDesignationMaster[0].DESIGNATION_NAME,
+                "ROLE": aDesignationMaster[0].ROLE,
                 "EMAIL_ID": aEmployeeData[j].EMAIL_ID,
                 "EMPLOYEE_ID": aEmployeeData[j].EMPLOYEE_ID,
                 "EMPLOYEE_NAME": aEmployeeData[j].EMPLOYEE_NAME,
