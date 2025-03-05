@@ -25,7 +25,7 @@ module.exports = cds.service.impl(function () {
                 eventNo = 1;
                 var existingData = await SELECT.from`TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE` .where`EMPLOYEE_ID=${aLeaveRequestInfo[0].EMPLOYEE_ID}`;
                 var sp = await dbconn.loadProcedurePromisified(hdbext, null, 'LEAVE_ACTIONS');
-                var output = await dbconn.callProcedurePromisified(sp, [sAction,eventNo, aLeaveRequestInfo,aLeaveEventLog ]);
+                var output = await dbconn.callProcedurePromisified(sp, [sAction,eventNo,null,null, aLeaveRequestInfo,aLeaveEventLog ]);
                 Result = output.outputScalar.OUT_SUCCESS;
                 return Result;
             }
@@ -36,45 +36,79 @@ module.exports = cds.service.impl(function () {
                 var existingData = await SELECT.from`TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE` .where`EMPLOYEE_ID=${aLeaveRequestInfo[0].EMPLOYEE_ID}`;
                 
                     var sp = await dbconn.loadProcedurePromisified(hdbext, null, 'LEAVE_ACTIONS');
-                    var output = await dbconn.callProcedurePromisified(sp, [sAction,eventNo, aLeaveRequestInfo,aLeaveEventLog ]);
+                    var output = await dbconn.callProcedurePromisified(sp, [sAction,eventNo,0,'', aLeaveRequestInfo,aLeaveEventLog ]);
                     Result = output.outputScalar.OUT_SUCCESS;
                     return Result;
                    
             }
             else if(sAction === 'APPROVE'){
+                var iStatus,sRemark;
                 var eventData = await SELECT `MAX(EVENT_NO) AS EVENT` .from`TEAM_LEAVE_PLANNER_LEAVE_EVENT_LOG` .where`LEAVE_ID=${aLeaveRequestInfo[0].LEAVE_ID}`;
                 eventNo = eventData[0].EVENT + 1;
+
 
                 var leaveStatusData = await SELECT .from`TEAM_LEAVE_PLANNER_LEAVE_REQUEST` .where`LEAVE_ID=${aLeaveRequestInfo[0].LEAVE_ID} AND EMPLOYEE_ID=${aLeaveRequestInfo[0].EMPLOYEE_ID}`;
                 if(leaveStatusData[0].LEAVE_STATUS == 3){
                     return "The leave is already approved";
                 }
+                var employeeData = await SELECT.from`TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE` .where`EMPLOYEE_ID=${aLeaveRequestInfo[0].EMPLOYEE_ID}`;
+                if(leaveStatusData[0].LEAVE_STATUS == 1){
+                    if(employeeData[0].REPORTING_LEAD_ID == null){
+                        iStatus = 3;
+                        sRemark = "Leave request approved by manager";
+                    }else{
+                        iStatus = 2;
+                        sRemark = "Leave request approved by lead and pending from manager";
+                    }
+                }else if(leaveStatusData[0].LEAVE_STATUS == 2){
+                    iStatus = 3;
+                    sRemark = "Leave request approved by manager";
+                }
+
+
                 var sp = await dbconn.loadProcedurePromisified(hdbext, null, 'LEAVE_ACTIONS');
-                    var output = await dbconn.callProcedurePromisified(sp, [sAction,eventNo, aLeaveRequestInfo,aLeaveEventLog ]);
+                    var output = await dbconn.callProcedurePromisified(sp, [sAction,eventNo,iStatus,sRemark, aLeaveRequestInfo,aLeaveEventLog ]);
                     Result = output.outputScalar.OUT_SUCCESS;
                     return Result;
                 
                 
             }
             else if(sAction === 'REJECT'){
+                var iStatus,sRemark;
                 var eventData = await SELECT `MAX(EVENT_NO) AS EVENT` .from`TEAM_LEAVE_PLANNER_LEAVE_EVENT_LOG` .where`LEAVE_ID=${aLeaveRequestInfo[0].LEAVE_ID}`;
                 eventNo = eventData[0].EVENT + 1;
 
                 var leaveStatusData = await SELECT .from`TEAM_LEAVE_PLANNER_LEAVE_REQUEST` .where`LEAVE_ID=${aLeaveRequestInfo[0].LEAVE_ID} AND EMPLOYEE_ID=${aLeaveRequestInfo[0].EMPLOYEE_ID}`;
-                if(leaveStatusData[0].LEAVE_STATUS == 3 || leaveStatusData[0].LEAVE_STATUS == 2){
-                    return "The leave is Approved";
-                }
+                // if(leaveStatusData[0].LEAVE_STATUS == 3 || leaveStatusData[0].LEAVE_STATUS == 2){
+                //     return "The leave is Approved";
+                // }
                 if(leaveStatusData[0].LEAVE_STATUS == 5 || leaveStatusData[0].LEAVE_STATUS == 4){
                     return "The leave is already Rejected";
                 }
+
+
+                var employeeData = await SELECT.from`TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE` .where`EMPLOYEE_ID=${aLeaveRequestInfo[0].EMPLOYEE_ID}`;
+                if(leaveStatusData[0].LEAVE_STATUS == 1){
+                    if(employeeData[0].REPORTING_LEAD_ID == null){
+                        iStatus = 5;
+                        sRemark = "Leave request rejected by manager";
+                    }else{
+                        iStatus = 4;
+                        sRemark = "Leave request rejected by lead";
+                    }
+                }else if(leaveStatusData[0].LEAVE_STATUS == 2){
+                    iStatus = 5;
+                    sRemark = "Leave request was approved by lead but rejected by manager";
+                }
+
+
+
                 var sp = await dbconn.loadProcedurePromisified(hdbext, null, 'LEAVE_ACTIONS');
-                    var output = await dbconn.callProcedurePromisified(sp, [sAction,eventNo, aLeaveRequestInfo,aLeaveEventLog ]);
+                    var output = await dbconn.callProcedurePromisified(sp, [sAction,eventNo,iStatus,sRemark, aLeaveRequestInfo,aLeaveEventLog ]);
                     Result = output.outputScalar.OUT_SUCCESS;
                     return Result;
             }
-            
-
-            
+           
         } 
         catch (error) {
             var sType = error.code ? "Procedure" : "Node Js";

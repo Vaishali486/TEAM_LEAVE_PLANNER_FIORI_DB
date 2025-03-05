@@ -10,7 +10,7 @@ entity LEAVE_REQUEST {
     START_DATE: Timestamp	;
     END_DATE: Timestamp	;
     LEAVE_STATUS: Integer;	
-    LEAVE_NOTES: String(50);
+    LEAVE_NOTES: String(200);
     IS_DELETED	: String(2);
     // TO_EMPLOYEE : Association to one TLP.MASTER_EMPLOYEE on 
     //                 TO_EMPLOYEE.EMPLOYEE_ID = EMPLOYEE_ID;
@@ -37,8 +37,8 @@ entity LEAVE_EVENT_LOG{
             EVENT_CODE : String(5);
             USER_ID    : String(50);
             USER_NAME  : String(100);
-            REMARK     : String(100);//hardcode
-            COMMENT    : String(50);
+            REMARK     : String(200);//hardcode
+            COMMENT    : String(200);
             CREATED_ON : Timestamp;
    
 }

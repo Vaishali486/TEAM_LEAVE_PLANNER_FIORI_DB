@@ -1,6 +1,8 @@
 PROCEDURE "LEAVE_ACTIONS"(
     IN IN_ACTION NVARCHAR(10),
     IN IN_EVENT_NO INTEGER,
+    IN IN_STATUS INTEGER,
+    IN IN_REMARK NVARCHAR(200),
     IN ST_LEAVE_REQUEST_INFO "ST_LEAVE_REQUEST_INFO",
     IN ST_LEAVE_EVENT_LOG "ST_LEAVE_EVENT_LOG",
     OUT OUT_SUCCESS NVARCHAR(200)
@@ -34,7 +36,7 @@ AS BEGIN
 
     IF(:IN_ACTION = 'CREATE') THEN
         LV_EVENT_CODE = 'CR';
-        LV_REMARK = 'Leave reqest created';
+        LV_REMARK := 'Leave request created';
         LV_LEAVE_STATUS = 1;
     SELECT "LEAVE_ID".NEXTVAL INTO LV_LEAVE_ID FROM DUMMY;
 
@@ -92,7 +94,7 @@ AS BEGIN
 
     ELSEIF(:IN_ACTION = 'DELETE') THEN
     LV_EVENT_CODE = 'DL';
-    LV_REMARK ='Leave request deleted';
+    LV_REMARK := 'Leave request deleted';
 
         SELECT "LEAVE_ID","EMPLOYEE_ID"
         INTO LV_LEAVE_ID , LV_EMPLOYEE_ID 
@@ -122,10 +124,10 @@ AS BEGIN
 
 
         UPDATE  "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"
-        SET IS_DELETED = 'X', LEAVE_STATUS = 5
+        SET IS_DELETED = 'X', LEAVE_STATUS = 6
         WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" =:LV_EMPLOYEE_ID;
         LV_SUCCESS := 'SUCCESS';
-        LV_SUCCESS_MESSAGE := 'Leave request deleted successfully with  leave id: ' || :LV_LEAVE_ID;
+        LV_SUCCESS_MESSAGE := 'Leave request deleted successfully with leave id: ' || :LV_LEAVE_ID;
 
         -- //LOG
         
@@ -138,37 +140,38 @@ AS BEGIN
         INTO LV_LEAVE_ID , LV_EMPLOYEE_ID 
         FROM :ST_LEAVE_REQUEST_INFO;
 
-        SELECT "LEAVE_STATUS" INTO LV_LEAVE_STATUS FROM "TEAM_LEAVE_PLANNER_LEAVE_REQUEST" WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" =:LV_EMPLOYEE_ID;
+        -- SELECT "LEAVE_STATUS" INTO LV_LEAVE_STATUS FROM "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"
+        --  WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" = :LV_EMPLOYEE_ID;
 
-        SELECT "REPORTING_MANAGER_ID","REPORTING_LEAD_ID"
-        INTO LV_REPORTING_MANAGER_ID,LV_REPORTING_LEAD_ID
-        FROM "TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE" WHERE "EMPLOYEE_ID" =:LV_EMPLOYEE_ID;
+        -- SELECT "REPORTING_MANAGER_ID","REPORTING_LEAD_ID"
+        -- INTO LV_REPORTING_MANAGER_ID,LV_REPORTING_LEAD_ID
+        -- FROM "TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE" WHERE "EMPLOYEE_ID" = :LV_EMPLOYEE_ID;
 
         LV_EVENT_CODE = 'AP';
         -- LV_REMARK ='Leave request ';
 
-        IF(:LV_LEAVE_STATUS = 1) THEN
-            IF(:LV_REPORTING_LEAD_ID = NULL) THEN
-                UPDATE  "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"
-                SET LEAVE_STATUS = 3
-                WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" =:LV_EMPLOYEE_ID;
-                LV_REMARK ='Leave request approved by manager';
- 
-            ELSE
+        -- IF(:LV_LEAVE_STATUS = 1) THEN
+        --     IF  :LV_REPORTING_LEAD_ID != null  THEN
                 UPDATE "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"
-                SET LEAVE_STATUS = 2
-                WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" =:LV_EMPLOYEE_ID;
-                LV_REMARK ='Leave request approved by lead and pending from manager';
+                SET LEAVE_STATUS = :IN_STATUS
+                WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" = :LV_EMPLOYEE_ID;
+                LV_REMARK := :IN_REMARK;
+ 
+            -- ELSE
+            --     UPDATE  "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"
+            --     SET LEAVE_STATUS = 3
+            --     WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" = :LV_EMPLOYEE_ID;
+            --     LV_REMARK ='Leave request approved by manager';
                 
-            END IF;
-        ELSEIF(:LV_LEAVE_STATUS = 2) THEN   
-            UPDATE  "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"
-            SET LEAVE_STATUS = 3
-            WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" =:LV_EMPLOYEE_ID;
-            LV_REMARK ='Leave request approved by manager';
-        END IF;
+        --     END IF;
+        -- ELSEIF(:LV_LEAVE_STATUS = 2) THEN   
+        --     UPDATE  "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"
+        --     SET LEAVE_STATUS = 3
+        --     WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" = :LV_EMPLOYEE_ID;
+            -- LV_REMARK ='Leave request approved by manager';
+        -- END IF;
         LV_SUCCESS := 'SUCCESS';
-        LV_SUCCESS_MESSAGE := :LV_REMARK || ' with  leave id: ' || :LV_LEAVE_ID;
+        LV_SUCCESS_MESSAGE := :LV_REMARK || ' with leave id: ' || :LV_LEAVE_ID ;
 
 -- LOG
         
@@ -182,36 +185,40 @@ AS BEGIN
     SELECT "LEAVE_ID","EMPLOYEE_ID"
     INTO LV_LEAVE_ID , LV_EMPLOYEE_ID 
     FROM :ST_LEAVE_REQUEST_INFO;
-    SELECT "LEAVE_STATUS" INTO LV_LEAVE_STATUS FROM "TEAM_LEAVE_PLANNER_LEAVE_REQUEST" WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" =:LV_EMPLOYEE_ID;
 
-    SELECT "REPORTING_MANAGER_ID","REPORTING_LEAD_ID"
-    INTO LV_REPORTING_MANAGER_ID,LV_REPORTING_LEAD_ID
-    FROM "TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE" WHERE "EMPLOYEE_ID" =:LV_EMPLOYEE_ID;
+    -- SELECT "LEAVE_STATUS" INTO LV_LEAVE_STATUS FROM "TEAM_LEAVE_PLANNER_LEAVE_REQUEST" 
+    -- WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" = :LV_EMPLOYEE_ID;
+
+    -- SELECT "REPORTING_MANAGER_ID","REPORTING_LEAD_ID"
+    -- INTO LV_REPORTING_MANAGER_ID,LV_REPORTING_LEAD_ID
+    -- FROM "TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE" WHERE "EMPLOYEE_ID" = :LV_EMPLOYEE_ID;
 
     -- LV_EVENT_CODE = 'AP';
     -- LV_REMARK ='Leave request ';
 
-    IF(:LV_LEAVE_STATUS=1) THEN
-        IF(:LV_REPORTING_LEAD_ID = NULL) THEN
-            UPDATE  "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"
-            SET LEAVE_STATUS = 5
-            WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" =:LV_EMPLOYEE_ID;
-            LV_REMARK ='Leave request rejected by manager';
+    -- IF(:LV_LEAVE_STATUS=1) THEN
+    --     IF(:LV_REPORTING_LEAD_ID != NULL) THEN
             
-        ELSE
-            UPDATE  "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"
-            SET LEAVE_STATUS = 4
-            WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" =:LV_EMPLOYEE_ID;
-        LV_REMARK ='Leave request rejected by lead';
-        END IF;
-    ELSEIF(:LV_LEAVE_STATUS=2) THEN   
-        UPDATE  "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"
-        SET LEAVE_STATUS = 5
-        WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" =:LV_EMPLOYEE_ID;
-        LV_REMARK ='Leave request was approved by lead but rejected by manager';
-    END IF;
+            UPDATE "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"
+            SET LEAVE_STATUS = :IN_STATUS
+            WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" = :LV_EMPLOYEE_ID;
+            LV_REMARK := :IN_REMARK;
+            
+    --     ELSE
+    --         UPDATE  "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"
+    --         SET LEAVE_STATUS = 5
+    --         WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" = :LV_EMPLOYEE_ID;
+    --         LV_REMARK ='Leave request rejected by manager';
+
+    --     END IF;
+    -- ELSEIF(:LV_LEAVE_STATUS=2) THEN   
+    --     UPDATE  "TEAM_LEAVE_PLANNER_LEAVE_REQUEST"
+    --     SET LEAVE_STATUS = 5
+    --     WHERE "LEAVE_ID" = :LV_LEAVE_ID AND "EMPLOYEE_ID" = :LV_EMPLOYEE_ID;
+    --     LV_REMARK ='Leave request was approved by lead but rejected by manager';
+    -- END IF;
     LV_SUCCESS := 'SUCCESS';
-    LV_SUCCESS_MESSAGE := :LV_REMARK || ' with  leave id: ' || :LV_LEAVE_ID;
+    LV_SUCCESS_MESSAGE := :LV_REMARK || ' with leave id: ' || :LV_LEAVE_ID  ;
 END IF;
 
     IF(:LV_SUCCESS = 'SUCCESS') THEN
