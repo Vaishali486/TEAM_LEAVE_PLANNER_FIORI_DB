@@ -1,0 +1,98 @@
+@server = http://localhost:4004
+
+
+### LeaveRequest
+# @name LeaveRequest_GET
+GET {{server}}/odata/v4/team-leave-planner/LeaveRequest
+
+
+### LeaveRequest create leave request
+# @name LeaveRequest_POST
+POST {{server}}/odata/v4/team-leave-planner/TeamLeaveAction
+Content-Type: application/json
+
+{
+    "sAction": "CREATE",
+    "aLeaveRequestInfo": [
+        {
+            "LEAVE_ID": 1,
+            "EMPLOYEE_ID": 5035,
+            "LEAVE_TYPE": "GL",
+            "NO_OF_LEAVES": 1,
+            "START_DATE": "2025-03-08T18:30:00",
+            "END_DATE": "2025-03-08T18:30:00",
+            "LEAVE_STATUS": 1,
+            "LEAVE_NOTES": "test",
+            "IS_DELETED": null
+        }
+    ],
+    "aLeaveEventLog": [
+        {
+            "LEAVE_ID": 1,
+            "EVENT_NO": 1,
+            "EVENT_CODE": "CR",
+            "USER_ID": "supritha.m@intellectbizware.com",
+            "USER_NAME": "Supritha Moolya",
+            "REMARK": "Leave Request Created",
+            "COMMENT": "test",
+            "CREATED_ON": "2025-02-27T09:31:31.445Z"
+        }
+    ]
+}
+
+
+### TeamLeaveAction delete/Approve/reject leave request
+# @name TeamLeaveAction_POST
+POST {{server}}/odata/v4/team-leave-planner/TeamLeaveAction
+Content-Type: application/json
+
+{
+    "sAction":"DELETE",
+    "aLeaveRequestInfo":[
+        {
+            "LEAVE_ID":1000090,
+            "EMPLOYEE_ID":5035   
+        }
+    ],
+    "aLeaveEventLog":[
+        {
+            "LEAVE_ID" : 1000090,
+            "EVENT_NO"   : 1,
+            "EVENT_CODE" : "CR",
+            "USER_ID"    : "4000",
+            "USER_NAME"  : "Vaishali Chikane",
+            "REMARK"     : "request Deleted",
+            "COMMENT"    : "Leave request deleted by employee id : 5035",
+            "CREATED_ON" : "2024-11-19T09:12:09"
+        }
+    ]
+}
+
+
+### InsertMasterData
+# @name InsertMasterData_POST
+POST {{server}}/odata/v4/team-leave-planner/InsertMasterData
+Content-Type: application/json
+
+{
+    "sAction":"INSERT",
+    "aEmployeeMaster":[
+        {
+            "EMPLOYEE_ID":5037,
+            "EMPLOYEE_NAME":"BHavesh",
+            "DESIGNATION_CODE": 62,
+            "MOBILE_NO":"23456789",
+            "EMAIL_ID":"asdfg2345",
+            "REPORTING_MANAGER_ID" :345,
+            "REPORTING_LEAD_ID": 23456,
+            "GENERAL_LEAVE_BALANCE" :12,
+            "CASUAL_LEAVE_BALANCE":12
+        }
+    ],
+    "aEmployeeProject":[
+        {
+             "EMPLOYEE_ID":5037,
+             "PROJECT_CODE":1
+        }
+    ]
+}

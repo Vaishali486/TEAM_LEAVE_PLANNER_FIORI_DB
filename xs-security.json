@@ -50,8 +50,7 @@
   "redirect-uris": [
    "http://localhost:5000/",
    "https://0a8ae69etrial-dev-team-leave-planner.cfapps.us10-001.hana.ondemand.com/",
-    "https://port5000-workspaces-ws-w2n2z.us10.trial.applicationstudio.cloud.sap/"
-   
+   "https://port5000-workspaces-ws-w2n2z.us10.trial.applicationstudio.cloud.sap/"
   ]
  }
 }

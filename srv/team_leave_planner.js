@@ -101,8 +101,6 @@ module.exports = cds.service.impl(function () {
                     sRemark = "Leave request was approved by lead but rejected by manager";
                 }
 
-
-
                 var sp = await dbconn.loadProcedurePromisified(hdbext, null, 'LEAVE_ACTIONS');
                     var output = await dbconn.callProcedurePromisified(sp, [sAction,eventNo,iStatus,sRemark, aLeaveRequestInfo,aLeaveEventLog ]);
                     Result = output.outputScalar.OUT_SUCCESS;
@@ -177,7 +175,7 @@ module.exports = cds.service.impl(function () {
             var aApproverLeadData = await SELECT .from`TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE` .where`EMPLOYEE_ID=${aApproverData[0].REPORTING_LEAD_ID}`;
         }
 
-        aApproverLeaveData = await SELECT .from`TEAM_LEAVE_PLANNER_LEAVE_REQUEST` .where`EMPLOYEE_ID=${vEmployeeId}`;
+        aApproverLeaveData = await SELECT .from`TEAM_LEAVE_PLANNER_LEAVE_REQUEST` .where`EMPLOYEE_ID=${vEmployeeId} AND IS_DELETED = NULL` .orderBy({START_DATE:"asce"});
 
         if(sRole ==="Approver"){
             aEmployeeData = await SELECT .from`TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE` .where`REPORTING_LEAD_ID=${vEmployeeId}`;
@@ -189,7 +187,7 @@ module.exports = cds.service.impl(function () {
         
 
         var aData = aEmployeeData.map(function(item){return item.EMPLOYEE_ID});
-        aEmployeeLeaveData = await SELECT .from`TEAM_LEAVE_PLANNER_LEAVE_REQUEST` .where`EMPLOYEE_ID IN ${aData}`;
+        aEmployeeLeaveData = await SELECT .from`TEAM_LEAVE_PLANNER_LEAVE_REQUEST` .where`EMPLOYEE_ID IN ${aData} AND IS_DELETED = null` .orderBy({START_DATE:"desc"});
 
         oData = {
             // "startDate": "",
