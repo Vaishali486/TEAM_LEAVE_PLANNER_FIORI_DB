@@ -19,7 +19,11 @@ modules:
       readiness-health-check-type: http
       readiness-health-check-http-endpoint: /health
     build-parameters:
-      builder: npm
+      builder: custom
+      commands:
+        - npm root
+      ignore:
+        - node_modules/
     provides:
       - name: srv-api # required by consumers of CAP services (e.g. approuter)
         properties:
@@ -35,6 +39,12 @@ modules:
       keep-existing-routes: true
       disk-quota: 256M
       memory: 256M
+    build-parameters:
+      builder: custom
+      commands:
+        - npm root
+      ignore:
+        - node_modules/
     requires:
       - name: srv-api
         group: destinations
@@ -54,6 +64,12 @@ modules:
     path: gen/db
     parameters:
       buildpack: nodejs_buildpack
+    build-parameters:
+      builder: custom
+      commands:
+        - npm root
+      ignore:
+        - node_modules/
     requires:
       - name: TEAM_LEAVE_PLANNER-db
 
