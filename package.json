@@ -8,9 +8,8 @@
   "dependencies": {
     "@cap-js/hana": "^1",
     "@sap/cds": "^8",
-    "@sap/cds-hana": "^2",
     "@sap/hdbext": "^7.7.6",
-    "@sap/xssec": "^3",
+    "@sap/xssec": "^4.4.0",
     "express": "^4",
     "nodemailer": "^6.9.7",
     "passport": "^0.6.0",
@@ -22,7 +21,8 @@
     "@sap/hdi-deploy": "4.9.5"
   },
   "scripts": {
-    "start": "cds-serve"
+    "start": "cds-serve",
+    "watch-project1": "cds watch --open project1/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "cds": {
     "requires": {
@@ -38,5 +38,8 @@
     "server": {
       "index": true
     }
-  }
+  },
+  "sapux": [
+    "app/project1"
+  ]
 }

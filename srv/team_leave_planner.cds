@@ -2,6 +2,7 @@ using { TEAM_LEAVE_PLANNER } from '../db/TRANSACTIONAL_TABLE';
 using {  TEAM_LEAVE_PLANNER.MASTER_EMPLOYEE,
 TEAM_LEAVE_PLANNER.MASTER_PROJECT,
 TEAM_LEAVE_PLANNER.MASTER_LEAVE_TYPE,
+TEAM_LEAVE_PLANNER.EMPLOYEE_PROJECT
  } from '../db/MASTER_TABLES';
 
 
@@ -15,12 +16,16 @@ service team_leave_planner {
     // @readonly
     entity LeaveEventLog as projection on TEAM_LEAVE_PLANNER.LEAVE_EVENT_LOG; 
     // @requires : ['Admin','Approver'] //Approver can change the designation of an employee
+   @odata.draft.enabled
    entity MasterEmployee as projection on TEAM_LEAVE_PLANNER.MASTER_EMPLOYEE; 
     // @requires : ['Admin','Approver']
+   @odata.draft.enabled
    entity employeeProject as projection on TEAM_LEAVE_PLANNER.EMPLOYEE_PROJECT;
 //    @requires : 'Admin'
+   @odata.draft.enabled
    entity MasterDesignation as projection on TEAM_LEAVE_PLANNER.MASTER_DESIGNATION;
 //    @requires : 'Admin'
+   @odata.draft.enabled
    entity MasterProject as projection on TEAM_LEAVE_PLANNER.MASTER_PROJECT; 
 //    @requires : 'Admin'
    entity MasterLeaveType as projection on TEAM_LEAVE_PLANNER.MASTER_LEAVE_TYPE; 

@@ -51,6 +51,9 @@ module.exports = cds.service.impl(function () {
                 if(leaveStatusData[0].LEAVE_STATUS == 3){
                     return "The leave is already approved";
                 }
+                if(leaveStatusData[0].LEAVE_STATUS == 6){
+                    return "The leave is already Deleted";
+                }
                 var employeeData = await SELECT.from`TEAM_LEAVE_PLANNER_MASTER_EMPLOYEE` .where`EMPLOYEE_ID=${aLeaveRequestInfo[0].EMPLOYEE_ID}`;
                 if(leaveStatusData[0].LEAVE_STATUS == 1){
                     if(employeeData[0].REPORTING_LEAD_ID == null){
@@ -84,6 +87,9 @@ module.exports = cds.service.impl(function () {
                 // }
                 if(leaveStatusData[0].LEAVE_STATUS == 5 || leaveStatusData[0].LEAVE_STATUS == 4){
                     return "The leave is already Rejected";
+                }
+                if(leaveStatusData[0].LEAVE_STATUS == 6){
+                    return "The leave is already Deleted";
                 }
 
 
@@ -275,7 +281,6 @@ module.exports = cds.service.impl(function () {
                
             }
             oData.Subordinates.EmployeeDetails.push(oSubordinates);
-
         }
         return oData;
     });

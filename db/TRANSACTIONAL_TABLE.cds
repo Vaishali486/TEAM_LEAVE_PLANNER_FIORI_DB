@@ -20,26 +20,24 @@ entity LEAVE_REQUEST {
                     TO_LEAVE_STATUS.CODE = LEAVE_STATUS;
     
 }
-entity EMPLOYEE_PROJECT{
-    key EMPLOYEE_ID :Integer;
-    key PROJECT_CODE : Integer;
-    TO_PROJECT_CODE : Association to many TLP.MASTER_PROJECT on 
-                    TO_PROJECT_CODE.CODE = PROJECT_CODE;
-    TO_EMPLOYEE_ID : Association to one TLP.MASTER_EMPLOYEE on
-                    TO_EMPLOYEE_ID.EMPLOYEE_ID = EMPLOYEE_ID;
-
-
-}
+// entity EMPLOYEE_PROJECT {
+//     key EMPLOYEE_ID :Integer;
+//     key PROJECT_CODE : Integer;
+//     TO_PROJECT_CODE : Association to many TLP.MASTER_PROJECT on 
+//                     TO_PROJECT_CODE.CODE = PROJECT_CODE;
+//     TO_EMPLOYEE_ID : Association to one TLP.MASTER_EMPLOYEE on
+//                     TO_EMPLOYEE_ID.EMPLOYEE_ID = EMPLOYEE_ID;
+// }
 
 entity LEAVE_EVENT_LOG{
-        key LEAVE_ID : Integer64;//hardcode
-        key EVENT_NO   : Integer;//sequence
-            EVENT_CODE : String(5);
-            USER_ID    : String(50);
-            USER_NAME  : String(100);
-            REMARK     : String(200);//hardcode
-            COMMENT    : String(200);
-            CREATED_ON : Timestamp;
+    key LEAVE_ID : Integer64;//hardcode
+    key EVENT_NO   : Integer;//sequence
+        EVENT_CODE : String(5);
+        USER_ID    : String(50);
+        USER_NAME  : String(100);
+        REMARK     : String(200);//hardcode
+        COMMENT    : String(200);
+        CREATED_ON : Timestamp;
    
 }
 
