@@ -10,7 +10,7 @@ context TEAM_LEAVE_PLANNER  {
                 DESCRIPTION : String(50);
                 IS_BILLABLE : Boolean;
     }
-     entity MASTER_LEAVE_TYPE {
+    entity MASTER_LEAVE_TYPE {
             key CODE :String(15);
                 DESCRIPTION : String(30);
     }
@@ -32,13 +32,18 @@ context TEAM_LEAVE_PLANNER  {
                 GENERAL_LEAVE_BALANCE:Decimal(16,1);
                 CASUAL_LEAVE_BALANCE:Decimal(16,1);
                 TO_MREPORTING_EMPLOYEE:Association to many MASTER_EMPLOYEE on
-                                       TO_MREPORTING_EMPLOYEE.REPORTING_MANAGER_ID = EMPLOYEE_ID;
+                                       TO_MREPORTING_EMPLOYEE.EMPLOYEE_ID = REPORTING_MANAGER_ID;
+
                 // EMPLOYEE_MREPORTING:Association to many MASTER_EMPLOYEE on
                 //                        EMPLOYEE_MREPORTING.REPORTING_MANAGER_ID = REPORTING_MANAGER_ID;  
-                TO_LREPORTING_EMPLOYEE : Association to many MASTER_EMPLOYEE on
-                                       TO_LREPORTING_EMPLOYEE.REPORTING_LEAD_ID = EMPLOYEE_ID;
+
+                // TO_LREPORTING_EMPLOYEE : Association to one MASTER_EMPLOYEE on
+                //                        TO_LREPORTING_EMPLOYEE.REPORTING_LEAD_ID = EMPLOYEE_ID;
+                TO_LREPORTING_EMPLOYEE : Association to one MASTER_EMPLOYEE on
+                                       TO_LREPORTING_EMPLOYEE.EMPLOYEE_ID = REPORTING_LEAD_ID;
+
                 // EMPLOYEE_LREPORTING:Association to many MASTER_EMPLOYEE on
-                //                        EMPLOYEE_LREPORTING.REPORTING_LEAD_ID = REPORTING_LEAD_ID;                     
+                //                        EMPLOYEE_LREPORTING.EMPLOYEE_ID = REPORTING_LEAD_ID;                     
                 TO_LEAVE : Association to many  TEAM_LEAVE_PLANNER.LEAVE_REQUEST on
                                 TO_LEAVE.EMPLOYEE_ID = EMPLOYEE_ID;
                 TO_DESIGNATION_CODE : Association to many MASTER_DESIGNATION on

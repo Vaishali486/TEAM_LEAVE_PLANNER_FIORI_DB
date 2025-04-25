@@ -2,9 +2,28 @@ const cds = require('@sap/cds')
 const dbClass = require("sap-hdbext-promisfied")
 const hdbext = require("@sap/hdbext")
 const { response } = require('express')
+const { SELECT } = require('@sap/cds/lib/ql/cds-ql')
 
-module.exports = cds.service.impl(function () {
-    // const {Master_Employee,Leave_Request,Leave_Event_Log}=this.entities
+module.exports = cds.service.impl(function (srv) {
+    // const {Master_Employee,Leave_Request,Leave_Event_Log}=this.entities;
+    const {MasterDesignation} =this.entities;
+    this.before('NEW',MasterDesignation.drafts, async (req)=>{
+        try{
+        var sequenceData = await SELECT`MAX(SEQUENCE_ID) as MAX` .from`TEAM_LEAVE_PLANNER_MASTER_DESIGNATION`;
+        if(!sequenceData[0].MAX){
+            req.data.SEQUENCE_ID = 1;
+        }
+        else {
+            req.data.SEQUENCE_ID = sequenceData[0].MAX + 1;
+        }
+        }
+        catch (error) {
+            let iErrorCode = error.code ?? 500;
+            req.error({ code: iErrorCode, message: error.message ? error.message : error }); 
+        }
+
+    });
+
     this.on('TeamLeaveAction',async(req) =>{
         try {
         var client = await dbClass.createConnectionFromEnv();

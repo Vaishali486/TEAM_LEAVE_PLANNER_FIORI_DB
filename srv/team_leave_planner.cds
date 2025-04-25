@@ -17,6 +17,7 @@ service team_leave_planner {
     entity LeaveEventLog as projection on TEAM_LEAVE_PLANNER.LEAVE_EVENT_LOG; 
     // @requires : ['Admin','Approver'] //Approver can change the designation of an employee
    @odata.draft.enabled
+   // @odata.draft.bypass
    entity MasterEmployee as projection on TEAM_LEAVE_PLANNER.MASTER_EMPLOYEE; 
     // @requires : ['Admin','Approver']
    @odata.draft.enabled
