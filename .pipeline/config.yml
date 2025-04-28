@@ -22,6 +22,10 @@ steps:
   artifactPrepareVersion:
     versioningType: cloud_noTag
 
+  tmsUpload:
+    nodeName: "qa"
+    credentialsId: "ctms-key"
+
 ### Stage-specific configuration
 stages:
   'Confirm':
@@ -32,11 +36,11 @@ stages:
 #      - alias: 'mySystemAlias'
 #        credentialId: 'mySystemCredentialsId'
 
-#  Release:
-#    cfTargets:
-#      - org: 'myOrg'
-#        space: 'mySpace'
-#        apiEndpoint: 'https://'
-#        appName: 'myAppName'
-#        manifest: 'manifest.yml'
-#        credentialsId: 'myDeploymentCredentialsId'
+Release:
+   cfTargets:
+     - org: '0a8ae69etrial'
+       space: 'dev'
+       apiEndpoint: 'https://api.cf.us10-001.hana.ondemand.com'
+       appName: 'team_leave_planner'
+       tmsUpload: true
+       
