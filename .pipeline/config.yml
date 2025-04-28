@@ -42,5 +42,7 @@ Release:
        space: 'dev'
        apiEndpoint: 'https://api.cf.us10-001.hana.ondemand.com'
        appName: 'team_leave_planner'
+       cfCredentialsId: 'cf'
        tmsUpload: true
+       
        
