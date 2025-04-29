@@ -9,8 +9,9 @@ build-parameters:
     - builder: custom
       commands:
         # - npm ci
-        - npm install 
-        - npx cds build --production
+        - npm install --production
+        - npx -p @sap/cds-dk cds build --production
+
 modules:
   - name: TEAM_LEAVE_PLANNER-srv
     type: nodejs
