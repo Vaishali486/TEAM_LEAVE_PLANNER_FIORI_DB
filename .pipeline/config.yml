@@ -1,114 +1,36 @@
-###
-# This file configures the project "Piper" pipeline of your project.
-# For a reference of the configuration concept and available options, please have a look into its documentation.
-#
-# The documentation for the most recent pipeline version can always be found at:
-#    https://www.project-piper.io/
-#
-# This is a YAML-file. YAML is an indentation-sensitive file format. Please make sure to properly indent changes to it.
-###
-
-
-
-### General project setup
+---
 general:
   buildTool: "mta"
-  # inferBuildTool: true
+service:
+  buildToolVersion: "MBTJ21N22"
+  stages:
+    Release:
+      cfCredentialsId: "cf"
 stages:
   Build:
     mavenExecuteStaticCodeChecks: false
-    npmExecuteLint: true
- 
-  Additional Unit Tests:
-    npmExecuteScripts: false
-    karmaExecuteTests: false
- 
+    npmExecuteLint: false
   Acceptance:
     cloudFoundryDeploy: false
-    cfApiEndpoint: "https://api.cf.us10-001.hana.ondemand.com"
-    cfOrg: "0a8ae69etrial"
-    cfSpace: "dev"
-    cfAppName: "team_leave_planner"
-    cfCredentialsId: "cf"
-    uiVeri5ExecuteTests: false
-
-  # 'Confirm':
-  #   manualConfirmation: false
-
+    npmExecuteEndToEndTests: false
+  Malware Scan:
+    malwareExecuteScan: false
   Release:
-    cloudFoundryDeploy: true
+    tmsExport: false
+    tmsUpload: false
     cfApiEndpoint: "https://api.cf.us10-001.hana.ondemand.com"
     cfOrg: "0a8ae69etrial"
     cfSpace: "dev"
-    cfAppName: "team_leave_planner"
-    # deployType: "standard"
-    cfCredentialsId: "cf"
-    tmsUpload: true
-
-### Step-specific configuration
+    deployType: "standard"
+    cloudFoundryDeploy: true
+  Additional Unit Tests:
+    npmExecuteScripts: true
+    runScripts:
+    - "test"
+  Compliance:
+    sonarExecuteScan: false
 steps:
-  mavenExecute:
-    dockerImage: devxci/mbtci:1.0.14
-
-  artifactPrepareVersion:
-    versioningType: cloud_noTag
-
-  npmExecuteLint:
-    failOnError: true
-
   cloudFoundryDeploy:
     mtaDeployParameters: "-f --version-rule ALL"
-
-  tmsUpload:
-    nodeName: "qa"
-    credentialsId: "ctms-key"
-
-### Stage-specific configuration
-# stages:
-  Build:
-    mavenExecuteStaticCodeChecks: false
-    npmExecuteLint: true
- 
-  Additional Unit Tests:
-    npmExecuteScripts: false
-    karmaExecuteTests: false
- 
-  Acceptance:
-    cloudFoundryDeploy: false
-    cfApiEndpoint: "https://api.cf.eu10.hana.ondemand.com"
-    cfOrg: "dpedev"
-    cfSpace: "dev"
-    cfAppName: "app"
-    cfCredentialsId: "deploy-to-cf"
-    uiVeri5ExecuteTests: false
-
-  # 'Confirm':
-  #   manualConfirmation: false
-
-  Release:
-    cloudFoundryDeploy: true
-    cfApiEndpoint: "https://api.cf.us10-001.hana.ondemand.com"
-    cfOrg: "0a8ae69etrial"
-    cfSpace: "dev"
-    cfAppName: "team_leave_planner"
-    # deployType: "standard"
-    cfCredentialsId: "cf"
-    tmsUpload: true
-
-#  Integration:
-#    credentials:
-#      - alias: 'mySystemAlias'
-#        credentialId: 'mySystemCredentialsId'
-
-# Release:
-#    cfTargets:
-#      - org: '0a8ae69etrial'
-#        space: 'dev'
-#        apiEndpoint: 'https://api.cf.us10-001.hana.ondemand.com'
-#        appName: 'team_leave_planner'
-#        cfCredentialsId: 'cf'
-#        tmsUpload: true
-       
-
-
-       
+  artifactPrepareVersion:
+    versioningType: "cloud_noTag"
